@@ -38,7 +38,7 @@
   h1 { margin: 0 0 14px; font-size: 28px; line-height: 1.35; }
   h2 { margin: 0 0 16px; font-size: 23px; line-height: 1.42; }
   .subtitle { font-size: 18px; line-height: 1.55; font-weight: 700; margin: 18px 0 22px; }
-  .small { color: #666; line-height: 1.5; font-size: 14px; }
+  .small { color: #666; line-height: 1.6; font-size: 14px; }
   button {
     border: 0;
     border-radius: 16px;
@@ -50,14 +50,11 @@
     width: 100%;
   }
   button:active { transform: scale(0.98); }
-  .start-btn, .next-btn, .retry-btn, .review-btn {
+  button:disabled { cursor: not-allowed; opacity: .65; }
+  .start-btn {
     background: #d9006c;
     color: #fff;
     margin-top: 18px;
-  }
-  .next-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
   }
   .quiz-top { text-align: left; margin-bottom: 18px; }
   .q-number { font-weight: 900; color: #d9006c; font-size: 18px; }
@@ -75,7 +72,7 @@
     transition: width 0.3s;
   }
   .question {
-    min-height: 150px;
+    min-height: 170px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -90,39 +87,46 @@
     gap: 12px;
     margin-top: 8px;
   }
-  .yes-btn { background: #ecfff3; color: #087b36; border: 2px solid #27ae60; }
-  .no-btn { background: #fff0f0; color: #b91c1c; border: 2px solid #ef4444; }
+  .yes-btn {
+    background: #ecfff3;
+    color: #087b36;
+    border: 2px solid #27ae60;
+    font-size: 42px;
+    padding: 24px 10px;
+  }
+  .no-btn {
+    background: #fff0f0;
+    color: #b91c1c;
+    border: 2px solid #ef4444;
+    font-size: 42px;
+    padding: 24px 10px;
+  }
   .selected-yes { background: #27ae60 !important; color: #fff !important; }
   .selected-no { background: #ef4444 !important; color: #fff !important; }
-  .feedback { display: none; }
-  .correct { color: #0a8a3a; }
-  .wrong { color: #d11a2a; }
+
   .score {
     font-size: 54px;
     font-weight: 1000;
     color: #d9006c;
-    margin: 10px 0;
+    margin: 10px 0 6px;
   }
-  .grade {
-    font-size: 28px;
-    font-weight: 1000;
-    margin: 10px 0 18px;
+  .result-message {
+    margin: 18px 0 6px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #444;
+    word-break: keep-all;
   }
-  .review-list {
-    text-align: left;
-    margin-top: 18px;
-    max-height: 360px;
-    overflow: auto;
-  }
-  .review-item {
-    background: #fff5fa;
-    border-left: 5px solid #d9006c;
-    padding: 14px;
-    border-radius: 12px;
-    margin-bottom: 12px;
+  .campaign-slogan {
+    margin: 22px 0 4px;
+    padding: 14px 12px;
+    border-radius: 16px;
+    background: #eefaf3;
+    color: #087b36;
+    font-size: 18px;
     line-height: 1.45;
+    font-weight: 900;
   }
-  .review-item b { color: #d9006c; }
 
   .curtain {
     position: fixed;
@@ -143,6 +147,7 @@
   .curtain.open .curtain-panel.left { transform: translateX(-105%); }
   .curtain.open .curtain-panel.right { transform: translateX(105%); }
   .curtain.hide { display: none; }
+
   #confettiCanvas {
     position: fixed;
     inset: 0;
@@ -187,10 +192,6 @@
     color: #fff;
     margin-top: 16px;
   }
-  .submit-btn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-  }
   .submit-message {
     margin-top: 12px;
     font-size: 14px;
@@ -204,14 +205,20 @@
   @media (max-width: 420px) {
     .card { padding: 26px 18px; border-radius: 22px; }
     h1 { font-size: 24px; }
-    .question { font-size: 20px; min-height: 170px; }
+    .question { font-size: 20px; min-height: 180px; }
     button { font-size: 17px; }
+    .yes-btn, .no-btn { font-size: 38px; }
   }
 </style>
 </head>
 <body>
-<div id="curtain" class="curtain hide"><div class="curtain-panel left"></div><div class="curtain-panel right"></div></div>
+<div id="curtain" class="curtain hide">
+  <div class="curtain-panel left"></div>
+  <div class="curtain-panel right"></div>
+</div>
+
 <canvas id="confettiCanvas"></canvas>
+
 <div class="app">
   <section id="startScreen" class="card">
     <div class="badge">감탄캠페인</div>
@@ -224,26 +231,36 @@
   <section id="quizScreen" class="card hidden">
     <div class="quiz-top">
       <div class="q-number" id="questionNumber"></div>
-      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="progress-wrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
     </div>
+
     <div class="question" id="questionText"></div>
+
     <div class="answer-grid">
       <button class="yes-btn" id="yesButton" onclick="selectAnswer('O')" aria-label="O 선택">O</button>
       <button class="no-btn" id="noButton" onclick="selectAnswer('X')" aria-label="X 선택">X</button>
     </div>
-    <div class="feedback" id="feedback"></div>
-    <button class="next-btn" id="nextButton" onclick="nextQuestion()" disabled>다음 문항 ▶</button>
   </section>
 
   <section id="resultScreen" class="card hidden">
-    <div class="badge">퀴즈 종료</div>
-    <h2>🎉 수고하셨습니다!</h2>
+    <div class="badge">퀴즈 완료</div>
+    <h2>🎉 퀴즈 완료!</h2>
     <div class="score" id="finalScore"></div>
-    <div class="grade" id="gradeText"></div>
     <p class="small" id="summaryText"></p>
+
+    <div class="result-message">
+      감(減)탄 캠페인에 참여해 주셔서 감사합니다.<br><br>
+      올바른 의료폐기물 분리배출에<br>
+      많은 관심과 실천을 부탁드립니다.
+    </div>
+
+    <div class="campaign-slogan">🌱 작은 실천이 만드는 감탄!</div>
 
     <div class="submit-box" id="submitBox">
       <div class="submit-title">참여 결과 등록</div>
+
       <label for="departmentInput">부서</label>
       <select id="departmentInput">
         <option value="">부서를 선택하세요</option>
@@ -309,22 +326,13 @@
       <button class="submit-btn" id="submitButton" onclick="submitResult()">결과 제출하기</button>
       <div class="submit-message" id="submitMessage"></div>
     </div>
-
-    <button class="review-btn" onclick="showReview()">틀린 문제 보기</button>
-    <button class="retry-btn" onclick="restartQuiz()">다시 풀기</button>
-  </section>
-
-  <section id="reviewScreen" class="card hidden">
-    <div class="badge">오답 확인</div>
-    <h2>틀린 문제 다시 보기</h2>
-    <div class="review-list" id="reviewList"></div>
-    <button class="retry-btn" onclick="backToResult()">결과 화면으로 돌아가기</button>
   </section>
 </div>
 
 <script>
 const GAS_URL = "https://script.google.com/macros/s/AKfycby9ncdrBm_MAW8D4FW1rGds_45XgTovP7c8av6tcsMbnlm1jWI4SqakLUoHb0hoHftunw/exec";
 let submitted = false;
+let answerLocked = false;
 
 const questions = [
   { q: '혈액이나 체액이 묻지 않은 비닐 포장재는 일반사업장폐기물로 배출한다.', a: 'O' },
@@ -350,12 +358,13 @@ const questions = [
 ];
 
 let currentIndex = 0;
-let selectedAnswer = null;
 let score = 0;
 let userAnswers = [];
 
 function show(id) {
-  ['startScreen', 'quizScreen', 'resultScreen', 'reviewScreen'].forEach(s => document.getElementById(s).classList.add('hidden'));
+  ['startScreen', 'quizScreen', 'resultScreen'].forEach(screenId => {
+    document.getElementById(screenId).classList.add('hidden');
+  });
   document.getElementById(id).classList.remove('hidden');
 }
 
@@ -363,9 +372,11 @@ function startQuiz() {
   currentIndex = 0;
   score = 0;
   userAnswers = [];
+  answerLocked = false;
+
   const curtain = document.getElementById('curtain');
-  curtain.classList.remove('hide');
-  curtain.classList.remove('open');
+  curtain.classList.remove('hide', 'open');
+
   setTimeout(() => curtain.classList.add('open'), 80);
   setTimeout(() => {
     show('quizScreen');
@@ -375,66 +386,75 @@ function startQuiz() {
 }
 
 function renderQuestion() {
-  selectedAnswer = null;
+  answerLocked = false;
+
   const item = questions[currentIndex];
-  document.getElementById('questionNumber').textContent = `문제 ${currentIndex + 1} / ${questions.length}`;
+  document.getElementById('questionNumber').textContent =
+    `문제 ${currentIndex + 1} / ${questions.length}`;
   document.getElementById('questionText').textContent = item.q;
-  document.getElementById('feedback').textContent = '';
-  document.getElementById('feedback').className = 'feedback';
-  document.getElementById('nextButton').disabled = true;
-  document.getElementById('nextButton').textContent = currentIndex === questions.length - 1 ? '결과 보기 ▶' : '다음 문항 ▶';
-  document.getElementById('progressBar').style.width = `${((currentIndex) / questions.length) * 100}%`;
-  document.getElementById('yesButton').classList.remove('selected-yes');
-  document.getElementById('noButton').classList.remove('selected-no');
+  document.getElementById('progressBar').style.width =
+    `${(currentIndex / questions.length) * 100}%`;
+
+  const yesButton = document.getElementById('yesButton');
+  const noButton = document.getElementById('noButton');
+
+  yesButton.classList.remove('selected-yes');
+  noButton.classList.remove('selected-no');
+  yesButton.disabled = false;
+  noButton.disabled = false;
 }
 
 function selectAnswer(answer) {
-  selectedAnswer = answer;
-  document.getElementById('yesButton').classList.toggle('selected-yes', answer === 'O');
-  document.getElementById('noButton').classList.toggle('selected-no', answer === 'X');
-  document.getElementById('nextButton').disabled = false;
-}
+  if (answerLocked) return;
+  answerLocked = true;
 
-function nextQuestion() {
-  if (!selectedAnswer) return;
+  const yesButton = document.getElementById('yesButton');
+  const noButton = document.getElementById('noButton');
+
+  yesButton.disabled = true;
+  noButton.disabled = true;
+  yesButton.classList.toggle('selected-yes', answer === 'O');
+  noButton.classList.toggle('selected-no', answer === 'X');
+
   const correct = questions[currentIndex].a;
-  const isCorrect = selectedAnswer === correct;
+  const isCorrect = answer === correct;
+
   if (isCorrect) score += 5;
+
   userAnswers.push({
     number: currentIndex + 1,
     question: questions[currentIndex].q,
     correctAnswer: correct,
-    userAnswer: selectedAnswer,
+    userAnswer: answer,
     isCorrect
   });
-  currentIndex++;
-  if (currentIndex < questions.length) {
-    renderQuestion();
-  } else {
-    document.getElementById('progressBar').style.width = '100%';
-    showResult();
-  }
-}
 
-function getGrade(score) {
-  if (score === 100) return '🏆 ESG MASTER';
-  if (score >= 90) return '🥇 GOLD';
-  if (score >= 80) return '🥈 SILVER';
-  if (score >= 70) return '🥉 BRONZE';
-  return '🌱 STARTER';
+  setTimeout(() => {
+    currentIndex++;
+
+    if (currentIndex < questions.length) {
+      renderQuestion();
+    } else {
+      document.getElementById('progressBar').style.width = '100%';
+      showResult();
+    }
+  }, 220);
 }
 
 function showResult() {
   show('resultScreen');
+
+  const correctCount = userAnswers.filter(item => item.isCorrect).length;
   document.getElementById('finalScore').textContent = `${score}점`;
-  document.getElementById('gradeText').textContent = getGrade(score);
-  const correctCount = userAnswers.filter(x => x.isCorrect).length;
-  document.getElementById('summaryText').textContent = `총 ${questions.length}문항 중 ${correctCount}문항 정답입니다.`;
+  document.getElementById('summaryText').textContent =
+    `총 ${questions.length}문제 중 ${correctCount}문제를 맞혔습니다.`;
+
   submitted = false;
   document.getElementById('submitButton').disabled = false;
   document.getElementById('submitButton').textContent = '결과 제출하기';
   document.getElementById('submitMessage').textContent = '';
   document.getElementById('submitMessage').className = 'submit-message';
+
   launchConfetti();
 }
 
@@ -442,6 +462,7 @@ function launchConfetti() {
   const canvas = document.getElementById('confettiCanvas');
   const ctx = canvas.getContext('2d');
   const dpr = window.devicePixelRatio || 1;
+
   canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -459,34 +480,40 @@ function launchConfetti() {
   }));
 
   let frame = 0;
+
   function animate() {
     ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-    pieces.forEach(p => {
-      p.x += p.speedX;
-      p.y += p.speedY;
-      p.rotation += p.rotationSpeed;
+
+    pieces.forEach(piece => {
+      piece.x += piece.speedX;
+      piece.y += piece.speedY;
+      piece.rotation += piece.rotationSpeed;
+
       ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.rotate(p.rotation * Math.PI / 180);
-      ctx.fillStyle = p.color;
-      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+      ctx.translate(piece.x, piece.y);
+      ctx.rotate(piece.rotation * Math.PI / 180);
+      ctx.fillStyle = piece.color;
+      ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.6);
       ctx.restore();
     });
+
     frame++;
+
     if (frame < 150) {
       requestAnimationFrame(animate);
     } else {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     }
   }
+
   animate();
 }
 
-
-
 function jsonpRequest(url, params) {
   return new Promise((resolve, reject) => {
-    const callbackName = 'quizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    const callbackName =
+      'quizCallback_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+
     params.callback = callbackName;
 
     const query = Object.keys(params)
@@ -507,7 +534,7 @@ function jsonpRequest(url, params) {
       delete window[callbackName];
     }
 
-    window[callbackName] = (response) => {
+    window[callbackName] = response => {
       cleanup();
       resolve(response);
     };
@@ -539,7 +566,7 @@ async function submitResult() {
     return;
   }
 
-  const correctCount = userAnswers.filter(x => x.isCorrect).length;
+  const correctCount = userAnswers.filter(item => item.isCorrect).length;
   const params = {
     department,
     name,
@@ -558,13 +585,15 @@ async function submitResult() {
 
   try {
     const result = await jsonpRequest(GAS_URL, params);
+
     if (result && result.success) {
       submitted = true;
       message.textContent = result.message || '제출이 완료되었습니다.';
       message.className = 'submit-message success-msg';
       submitButton.textContent = '제출 완료';
     } else {
-      message.textContent = (result && result.message) ? result.message : '제출에 실패했습니다.';
+      message.textContent =
+        result && result.message ? result.message : '제출에 실패했습니다.';
       message.className = 'submit-message error-msg';
       submitButton.disabled = false;
       submitButton.textContent = '결과 제출하기';
@@ -576,27 +605,6 @@ async function submitResult() {
     submitButton.textContent = '결과 제출하기';
   }
 }
-
-function showReview() {
-  show('reviewScreen');
-  const wrongs = userAnswers.filter(x => !x.isCorrect);
-  const list = document.getElementById('reviewList');
-  if (wrongs.length === 0) {
-    list.innerHTML = '<div class="review-item">🎉 틀린 문제가 없습니다. 완벽합니다!</div>';
-    return;
-  }
-  list.innerHTML = wrongs.map(item => `
-    <div class="review-item">
-      <b>문제 ${item.number}</b><br>
-      ${item.question}<br><br>
-      내 답변: ${item.userAnswer}<br>
-      정답: <b>${item.correctAnswer}</b>
-    </div>
-  `).join('');
-}
-
-function backToResult() { show('resultScreen'); }
-function restartQuiz() { startQuiz(); }
 </script>
 </body>
 </html>
