@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>의료폐기물 분리배출 YES or NO</title>
+<title>의료폐기물 분리배출 OX퀴즈</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -216,8 +216,8 @@
   <section id="startScreen" class="card">
     <div class="badge">감탄캠페인</div>
     <h1>2026년<br>한림대학교한강성심병원<br>감탄캠페인!</h1>
-    <div class="subtitle">올바른 의료폐기물<br>분리배출<br>YES or NO!</div>
-    <p class="small">총 20문항 · 100점 만점<br>각 문항은 YES 또는 NO로 선택해 주세요.</p>
+    <div class="subtitle">의료폐기물 분리배출<br>OX퀴즈</div>
+    <p class="small">총 20문항 · 100점 만점<br>각 문항의 답을 O 또는 X로 선택해 주세요.</p>
     <button class="start-btn" onclick="startQuiz()">게임 시작하기 ▶</button>
   </section>
 
@@ -228,8 +228,8 @@
     </div>
     <div class="question" id="questionText"></div>
     <div class="answer-grid">
-      <button class="yes-btn" id="yesButton" onclick="selectAnswer('YES')">YES</button>
-      <button class="no-btn" id="noButton" onclick="selectAnswer('NO')">NO</button>
+      <button class="yes-btn" id="yesButton" onclick="selectAnswer('O')" aria-label="O 선택">O</button>
+      <button class="no-btn" id="noButton" onclick="selectAnswer('X')" aria-label="X 선택">X</button>
     </div>
     <div class="feedback" id="feedback"></div>
     <button class="next-btn" id="nextButton" onclick="nextQuestion()" disabled>다음 문항 ▶</button>
@@ -327,26 +327,26 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycby9ncdrBm_MAW8D4FW1rGds
 let submitted = false;
 
 const questions = [
-  { q: '혈액이나 체액이 묻지 않은 주사기 비닐 포장재는 일반폐기물로 배출한다.', a: 'YES' },
-  { q: '혈액이 묻은 거즈는 일반폐기물로 배출한다.', a: 'NO' },
-  { q: '환자에게 사용한 수액세트는 의료폐기물로 배출한다.', a: 'YES' },
-  { q: '깨끗한 의료기기 종이박스는 의료 관련 제품으로 의료폐기물로 배출한다.', a: 'NO' },
-  { q: '멸균포장 비닐을 개봉한 후 오염되지 않아도 의료폐기물로 배출한다.', a: 'NO' },
-  { q: '혈액이 묻은 장갑은 의료폐기물로 배출한다.', a: 'YES' },
-  { q: '사용하지 않은 거즈와 포장지는 일반폐기물이다.', a: 'YES' },
-  { q: '주사기 바늘은 오염되지 않아도 의료폐기물로 배출한다.', a: 'YES' },
-  { q: '혈액이 묻지 않은 가운, 캡, 마스크 등 개인보호구는 일반폐기물로 배출한다.', a: 'YES' },
-  { q: '혈액·체액으로 오염되지 않은 일반수액백은 일반폐기물로 배출한다.', a: 'YES' },
-  { q: '의료폐기물은 일반폐기물보다 처리비용이 적다.', a: 'NO' },
-  { q: '감염병 환자, 격리환자 또는 혈액이 함유된 일회용 기저귀는 의료폐기물로 배출한다.', a: 'YES' },
-  { q: '환자복, 침구류를 사용 후 바로 폐기하는 경우 의료폐기물로 배출한다.', a: 'YES' },
-  { q: '백신·항암제·화학치료제를 제외한 폐의약품은 의료폐기물로 배출한다.', a: 'NO' },
-  { q: '일반건강검진환자가 사용한 일회용품은 의료폐기물로 배출한다.', a: 'NO' },
-  { q: '혈액·체액으로 오염되지 않은 폐백신·항암제 수액백은 일반폐기물로 배출한다.', a: 'NO' },
-  { q: '혈액이 묻지 않고 감염병이 아닌 환자의 기저귀는 일반폐기물로 배출한다.', a: 'YES' },
-  { q: '환자복, 침구류를 세탁하여 폐기할 경우 일반폐기물로 배출한다.', a: 'YES' },
-  { q: '백신·항암제·화학치료제를 제외한 폐의약품 중 마약류가 포함되어 있으면 의료폐기물로 배출한다.', a: 'NO' },
-  { q: '의료폐기물 분리배출은 의료기관 종사자로서 반드시 지켜야 한다.', a: 'YES' }
+  { q: '혈액이나 체액이 묻지 않은 비닐 포장재는 일반사업장폐기물로 배출한다.', a: 'O' },
+  { q: '혈액이 묻은 거즈는 일반사업장폐기물로 배출한다.', a: 'X' },
+  { q: '포장재에 환자의 혈액이나 체액이 묻은 경우 의료폐기물로 배출한다.', a: 'O' },
+  { q: '깨끗한 의료기기 종이박스는 의료 관련 제품으로 의료폐기물로 배출한다.', a: 'X' },
+  { q: '플라스틱 포장재는 오염되지 않아도 의료폐기물로 배출한다.', a: 'X' },
+  { q: '혈액이 묻은 장갑은 의료폐기물로 배출한다.', a: 'O' },
+  { q: '사용하지 않은 거즈와 포장지는 일반폐기물이다.', a: 'O' },
+  { q: '주사기 바늘은 오염되지 않아도 의료폐기물로 배출한다.', a: 'O' },
+  { q: '혈액·체액이 묻지 않은 가운, 캡, 덧신 등 개인보호구는 일반사업장폐기물로 배출한다.', a: 'O' },
+  { q: '미사용 일반수액백은 일반사업장폐기물 또는 재활용폐기물로 배출한다.', a: 'O' },
+  { q: '의료폐기물은 일반폐기물보다 처리비용이 적다.', a: 'X' },
+  { q: '감염병 또는 격리환자와 관련된 것은 반드시 의료폐기물로 배출한다.', a: 'O' },
+  { q: '환자복, 침구류를 사용 후 바로 폐기할 경우 의료폐기물로 배출한다.', a: 'O' },
+  { q: '모든 폐의약품은 의료폐기물이다.', a: 'X' },
+  { q: '감염의 우려가 없는 일반 환자들이 사용했던 생활용품도 의료폐기물이다.', a: 'X' },
+  { q: '의료폐기물 분리배출은 감염예방, 환경보호, 비용절감 효과가 있다.', a: 'O' },
+  { q: '환자가 사용하는 모든 기저귀는 의료폐기물이다.', a: 'X' },
+  { q: '환자복, 침구류를 세탁하여 폐기하는 경우 일반사업장폐기물로 배출한다.', a: 'O' },
+  { q: '백신·항암제·화학치료제가 혼합되는 경우에는 의료폐기물로 배출한다.', a: 'O' },
+  { q: '의료폐기물 분리배출은 의료기관 종사자의 의무이다.', a: 'O' }
 ];
 
 let currentIndex = 0;
@@ -390,8 +390,8 @@ function renderQuestion() {
 
 function selectAnswer(answer) {
   selectedAnswer = answer;
-  document.getElementById('yesButton').classList.toggle('selected-yes', answer === 'YES');
-  document.getElementById('noButton').classList.toggle('selected-no', answer === 'NO');
+  document.getElementById('yesButton').classList.toggle('selected-yes', answer === 'O');
+  document.getElementById('noButton').classList.toggle('selected-no', answer === 'X');
   document.getElementById('nextButton').disabled = false;
 }
 
